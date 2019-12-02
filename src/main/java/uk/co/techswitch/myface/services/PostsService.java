@@ -90,7 +90,7 @@ public class PostsService extends DatabaseService {
                                 "timestamp = :timestamp " +
                                 "WHERE id = :id")
                         .bind("id", id)
-                        .bind("senderId", updatePost.getSender())
+                        .bind("sender", updatePost.getSender())
                         .bind("message", updatePost.getMessage())
                         .bind("imageUrl", updatePost.getImageUrl())
                         .bind("timestamp", updatePost.getTimestamp())
