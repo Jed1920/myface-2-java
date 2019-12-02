@@ -21,7 +21,7 @@ public class PostsService extends DatabaseService {
                                         "WHERE (:sender is NULL OR sender = :sender) " +
                                         "AND (:before is NULL OR timestamp < :before) " +
                                         "AND (:after is NULL OR timestamp > :after) " +
-                                        "ORDER BY post.timestamp DESC " +
+                                        "ORDER BY timestamp DESC " +
                                         "LIMIT :limit " +
                                         "OFFSET :offset")
                         .bind("sender", filter.getSender())

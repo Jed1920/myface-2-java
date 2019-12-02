@@ -23,7 +23,7 @@ public class CommentsService extends DatabaseService {
                                         "AND (:post is NULL OR post = :post) " +
                                         "AND (:before is NULL OR timestamp < :before) " +
                                         "AND (:after is NULL OR timestamp > :after) " +
-                                        "ORDER BY post.timestamp DESC " +
+                                        "ORDER BY timestamp DESC " +
                                         "LIMIT :limit " +
                                         "OFFSET :offset")
                         .bind("sender", filter.getSender())
