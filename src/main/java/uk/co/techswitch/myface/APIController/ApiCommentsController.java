@@ -1,7 +1,11 @@
 package uk.co.techswitch.myface.APIController;
 
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
+import uk.co.techswitch.myface.models.api.ResultsPage;
+import uk.co.techswitch.myface.models.api.ResultsPageBuilder;
 import uk.co.techswitch.myface.models.api.comments.CommentModel;
+import uk.co.techswitch.myface.models.api.comments.CommentsFilter;
 import uk.co.techswitch.myface.models.api.comments.CreateComment;
 import uk.co.techswitch.myface.models.api.comments.UpdateComment;
 import uk.co.techswitch.myface.models.api.posts.CreatePost;
@@ -13,6 +17,8 @@ import uk.co.techswitch.myface.services.CommentsService;
 import uk.co.techswitch.myface.services.PostsService;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -23,6 +29,19 @@ public class ApiCommentsController {
 
     public ApiCommentsController(CommentsService commentsService) {
         this.commentsService = commentsService;
+    }
+
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public ResultsPage searchComments(CommentsFilter filter) {
+        List<Comment> comments = commentsService.searchComments(filter);
+        int numberMatchingSearch = commentsService.countComments(filter);
+
+        return new ResultsPageBuilder<CommentModel, CommentsFilter>()
+                .withItems(comments.stream().map(CommentModel::new).collect(Collectors.toList()))
+                .withFilter(filter)
+                .withNumberMatchingSearch(numberMatchingSearch)
+                .withBaseUrl("/comments")
+                .build();
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)

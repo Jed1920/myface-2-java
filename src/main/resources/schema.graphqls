@@ -1,0 +1,27 @@
+type Query{
+    userById(id: ID): User
+    postById(id: ID): Post
+    commentById(id: ID): Comment
+}
+
+type Post{
+    id: ID
+    user: User
+    message: String
+    image_url: String
+    timestamp: String
+    comments: [Comment]
+}
+type User{
+    id: ID
+    username: String
+    email: String
+    firstName: String
+    lastName: String
+}
+
+type Comment{
+    id: ID
+    user: User
+    message: String
+}

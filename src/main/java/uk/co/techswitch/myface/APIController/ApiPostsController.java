@@ -1,13 +1,19 @@
 package uk.co.techswitch.myface.APIController;
 
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
+import uk.co.techswitch.myface.models.api.ResultsPage;
+import uk.co.techswitch.myface.models.api.ResultsPageBuilder;
 import uk.co.techswitch.myface.models.api.posts.CreatePost;
 import uk.co.techswitch.myface.models.api.posts.PostModel;
+import uk.co.techswitch.myface.models.api.posts.PostsFilter;
 import uk.co.techswitch.myface.models.api.posts.UpdatePost;
 import uk.co.techswitch.myface.models.database.Post;
 import uk.co.techswitch.myface.services.PostsService;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -18,6 +24,19 @@ public class ApiPostsController {
 
     public ApiPostsController(PostsService postsService) {
         this.postsService = postsService;
+    }
+
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public ResultsPage searchPosts(PostsFilter filter) {
+        List<Post> posts = postsService.searchPosts(filter);
+        int numberMatchingSearch = postsService.countPosts(filter);
+
+        return new ResultsPageBuilder<PostModel, PostsFilter>()
+                .withItems(posts.stream().map(PostModel::new).collect(Collectors.toList()))
+                .withFilter(filter)
+                .withNumberMatchingSearch(numberMatchingSearch)
+                .withBaseUrl("/posts")
+                .build();
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
