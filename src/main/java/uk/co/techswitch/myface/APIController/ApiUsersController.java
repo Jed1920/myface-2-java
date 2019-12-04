@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import uk.co.techswitch.myface.models.api.ResultsPage;
 import uk.co.techswitch.myface.models.api.ResultsPageBuilder;
+import uk.co.techswitch.myface.models.api.password.CreatePassword;
 import uk.co.techswitch.myface.models.api.posts.CreatePost;
 import uk.co.techswitch.myface.models.api.posts.PostModel;
 import uk.co.techswitch.myface.models.api.posts.UpdatePost;
@@ -52,7 +53,7 @@ public class ApiUsersController {
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public UserModel createUser(@ModelAttribute @Valid CreateUser createUser) {
+    public UserModel createUser(@ModelAttribute @Valid CreateUser createUser,@ModelAttribute @Valid CreatePassword createPassword) {
         User user = usersService.createUser(createUser);
         UserModel model = new UserModel(user);
         return model;
