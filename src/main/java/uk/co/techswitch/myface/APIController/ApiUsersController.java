@@ -5,6 +5,7 @@ import org.springframework.web.servlet.ModelAndView;
 import uk.co.techswitch.myface.models.api.ResultsPage;
 import uk.co.techswitch.myface.models.api.ResultsPageBuilder;
 import uk.co.techswitch.myface.models.api.password.CreatePassword;
+import uk.co.techswitch.myface.models.api.password.PasswordUserModel;
 import uk.co.techswitch.myface.models.api.posts.CreatePost;
 import uk.co.techswitch.myface.models.api.posts.PostModel;
 import uk.co.techswitch.myface.models.api.posts.UpdatePost;
@@ -12,13 +13,16 @@ import uk.co.techswitch.myface.models.api.users.CreateUser;
 import uk.co.techswitch.myface.models.api.users.UpdateUser;
 import uk.co.techswitch.myface.models.api.users.UserModel;
 import uk.co.techswitch.myface.models.api.users.UsersFilter;
+import uk.co.techswitch.myface.models.database.Password;
 import uk.co.techswitch.myface.models.database.Post;
 import uk.co.techswitch.myface.models.database.User;
+import uk.co.techswitch.myface.services.PasswordService;
 import uk.co.techswitch.myface.services.PostsService;
 import uk.co.techswitch.myface.services.UsersService;
 
 import javax.validation.Valid;
 import javax.xml.transform.Result;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,9 +31,11 @@ import java.util.stream.Collectors;
 public class ApiUsersController {
 
     private final UsersService usersService;
+    private final PasswordService passwordService;
 
-    public ApiUsersController(UsersService usersService) {
+    public ApiUsersController(UsersService usersService, PasswordService passwordService) {
         this.usersService = usersService;
+        this.passwordService = passwordService;
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
@@ -53,9 +59,14 @@ public class ApiUsersController {
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public UserModel createUser(@ModelAttribute @Valid CreateUser createUser,@ModelAttribute @Valid CreatePassword createPassword) {
+    public PasswordUserModel createUser(@ModelAttribute @Valid CreateUser createUser,@ModelAttribute @Valid String passwordStr) throws NoSuchAlgorithmException {
         User user = usersService.createUser(createUser);
-        UserModel model = new UserModel(user);
+        CreatePassword createPassword = new CreatePassword();
+        createPassword.setPassword(passwordStr);
+        createPassword.setUserId(user.getId());
+        Password password = passwordService.createPassword(createPassword);
+
+        PasswordUserModel model = new PasswordUserModel(password,user);
         return model;
     }
 
